@@ -1,7 +1,21 @@
 const express = require('express')
 const app = express()
+const morgan = require('morgan')
 
 app.use(express.json())
+
+morganFormat = (tokens, req, res) => {
+    return [
+        tokens.method(req, res),
+        tokens.url(req, res),
+        tokens.status(req, res),
+        tokens.res(req, res, 'content-length'), '-',
+        tokens['response-time'](req, res), 'ms',
+        JSON.stringify(req.body)
+    ].join(' ')
+}
+
+app.use(morgan(morganFormat))
 
 let persons = [
     {
@@ -51,8 +65,9 @@ app.post('/api/persons', (request, response) => {
             error: error
         })        
     }
-
+    
     persons = persons.concat(person)
+
     response.json(person)
 })
 
