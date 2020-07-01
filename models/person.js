@@ -10,12 +10,6 @@ mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
         console.log('error connecting to MongoDB:', error.message)
     })
 
-const noteSchema = new mongoose.Schema({
-    content: String,
-    date: Date,
-    important: Boolean,
-})
-
 const personSchema = new mongoose.Schema({
     name: String,
     number: String,

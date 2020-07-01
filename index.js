@@ -47,33 +47,19 @@ let persons = [
 
 app.post('/api/persons', (request, response) => {
     const body = request.body
-    const id = Math.floor(Math.random() * 1000000) + 1
 
-    const person = {
+    if (body.name === undefined || body.number === undefined) {
+        return response.status(400).json({ error: 'name or number missing' })
+    }
+
+    const person = new Person({
         name: body.name,
-        number: body.number,
-        id: id
-    }
+        number: body.number
+    })
 
-    let error = ''
-    if (!body.name) {
-        error += 'Name missing. '
-    }
-    if (!body.number) {
-        error += 'Number missing. '
-    }
-    if (persons.map((person) => person.name).includes(body.name)) {
-        error += 'Name must be unique. '
-    }
-    if (error !== '') {
-        return response.status(400).json({
-            error: error
-        })        
-    }
-    
-    persons = persons.concat(person)
-
-    response.json(person)
+    person.save().then(savedNote => {
+        response.json(savedNote)
+    })
 })
 
 app.get('/api/persons', (req, res) => {
