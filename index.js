@@ -3,15 +3,13 @@ const express = require('express')
 const app = express()
 const morgan = require('morgan')
 const cors = require('cors')
-const { response } = require('express')
 const Person = require('./models/person')
 app.use(cors())
 app.use(express.json())
 app.use(express.static('build'))
 app.use(express.json())
 
-
-morganFormat = (tokens, req, res) => {
+const morganFormat = (tokens, req, res) => {
     return [
         tokens.method(req, res),
         tokens.url(req, res),
@@ -32,10 +30,11 @@ app.post('/api/persons', (request, response, next) => {
         number: body.number
     })
 
-    person.save().then(savedNote => {
-        response.json(savedNote)
-    })
-    .catch(error => next(error))
+    person.save()
+        .then(savedNote => {
+            response.json(savedNote)
+        })
+        .catch(error => next(error))
 })
 
 app.get('/api/persons', (req, res) => {
@@ -66,17 +65,17 @@ app.get('/api/persons/:id', (request, response, next) => {
 })
 
 app.delete('/api/persons/:id', (request, response, next) => {
-   Person.findByIdAndRemove(request.params.id)
-    .then(result => {
-        response.status(204).end()
-    })
-    .catch(error => next(error))
+    Person.findByIdAndRemove(request.params.id)
+        .then(result => {
+            response.status(204).end()
+        })
+        .catch(error => next(error))
 })
 
 app.put('/api/persons/:id', (request, response, next) => {
     const body = request.body
 
-    Person.findOneAndUpdate({ name: body.name }, { number: body.number}, { new: true })
+    Person.findOneAndUpdate({ name: body.name }, { number: body.number }, { new: true })
         .then(updatedPerson => {
             response.json(updatedPerson)
         })
@@ -98,7 +97,7 @@ const errorHandler = (error, request, response, next) => {
 
     next(error)
 }
-  
+
 app.use(errorHandler)
 
 
